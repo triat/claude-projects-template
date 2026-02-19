@@ -32,6 +32,21 @@
 # THIRD_PARTY_API_KEY=sk-local-...
 ```
 
+## MCP Server Secrets
+
+MCP secrets are read from your shell environment via `${VAR_NAME}` in `.mcp.json`.
+Add these to your shell profile (`~/.zshrc` or `~/.bashrc`), not here:
+
+```bash
+# Required for the GitHub MCP server
+export GITHUB_PERSONAL_ACCESS_TOKEN="ghp_..."
+
+# Required for the PostgreSQL MCP server
+export DATABASE_URL="postgresql://user:pass@localhost:5432/mydb"
+```
+
+Do NOT put secrets in `.mcp.json` directly — it is committed to the repository.
+
 ---
 
 ## Local Run Commands
