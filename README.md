@@ -38,6 +38,8 @@ cp /path/to/claude-project-template/TASKS.md /your/new/project/
 ```
 .
 ├── CLAUDE.md                          # Project identity, commands, focus, gotchas
+├── CLAUDE.local.md                    # Personal overrides — gitignored, never committed
+├── CLAUDE.local.md.example            # Template for CLAUDE.local.md
 ├── TASKS.md                           # Task board dashboard (auto-maintained by Claude)
 ├── .mcp.json                          # MCP server declarations (GitHub, DB, Fetch)
 └── .claude/
@@ -287,6 +289,48 @@ The design system lives in `.claude/docs/design-system.md` and is imported into 
 
 ---
 
+## CLAUDE.local.md
+
+`CLAUDE.local.md` is your personal, machine-specific override file. Claude Code reads it automatically every session, and it takes **highest precedence** over `CLAUDE.md`.
+
+**It is automatically gitignored by Claude Code** — it never gets committed.
+
+### Setup
+
+```bash
+cp CLAUDE.local.md.example CLAUDE.local.md
+```
+
+Then edit `CLAUDE.local.md` with anything that differs on your machine.
+
+### What to put in it
+
+| What | Example |
+|------|---------|
+| Local DB URL | `DATABASE_URL=postgresql://me@localhost/mydb_dev` |
+| Personal run commands | Use `pnpm` instead of `npm`, or `make dev` |
+| Machine-specific gotchas | "fnm needed before npm — run `fnm use` first" |
+| Personal preferences | "Always confirm before DB migrations" |
+| Extra off-limits rules | "Don't restart Docker — other projects depend on it" |
+
+### What NOT to put in it
+
+- Anything the whole team needs — that goes in `CLAUDE.md`
+- Production secrets — use a secret manager
+- Rules about the codebase architecture — that goes in `.claude/docs/`
+
+### Memory hierarchy
+
+Claude Code merges files from all levels, with later entries winning:
+
+```
+~/.claude/CLAUDE.md          # Your personal defaults (all projects)
+./CLAUDE.md                  # This project's shared config
+./CLAUDE.local.md            # Your machine-specific overrides ← highest precedence
+```
+
+---
+
 ## MCP Servers
 
 MCP (Model Context Protocol) gives Claude native access to external tools. Servers are declared in `.mcp.json` at the project root and enabled in `.claude/settings.json`.
@@ -381,6 +425,12 @@ Edit `.claude/docs/design-system.md` — update the color token table, typograph
 ## Setup Checklist
 
 Copy this into your project's first task or keep it handy:
+
+**`CLAUDE.local.md`** (per developer, never committed)
+- [ ] Copy from `CLAUDE.local.md.example`
+- [ ] Local database URL (if different from shared default)
+- [ ] Machine-specific run command overrides
+- [ ] Machine-specific gotchas
 
 **`CLAUDE.md`**
 - [ ] Project name and description

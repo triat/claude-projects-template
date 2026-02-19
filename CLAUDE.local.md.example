@@ -1,0 +1,86 @@
+# Local Overrides — [YOUR NAME] on [MACHINE NAME]
+
+<!--
+  This file is CLAUDE.local.md — your personal, machine-specific overrides.
+
+  HOW IT WORKS
+  - Claude Code reads this automatically at the start of every session.
+  - It takes HIGHEST precedence — it overrides anything in CLAUDE.md.
+  - It is automatically gitignored. Never committed. Yours alone.
+
+  SETUP
+  Copy this file: cp CLAUDE.local.md.example CLAUDE.local.md
+  Then fill in anything that differs from the shared CLAUDE.md defaults.
+  Delete sections you don't need.
+-->
+
+---
+
+## Local Environment
+
+```bash
+# Override the dev server port if yours differs
+# DEV_PORT=4000
+
+# Local database (override the shared .env default)
+# DATABASE_URL=postgresql://tom@localhost/myproject_dev
+
+# Local test database
+# TEST_DATABASE_URL=postgresql://tom@localhost/myproject_test
+
+# Any machine-specific API keys for local dev/testing only
+# THIRD_PARTY_API_KEY=sk-local-...
+```
+
+---
+
+## Local Run Commands
+
+<!-- Override only the commands that differ on this machine -->
+
+```bash
+# Install
+# pnpm install   # if you use pnpm instead of npm
+
+# Dev server
+# make dev       # if you prefer make targets
+
+# Tests
+# ./scripts/test-local.sh   # if you have a local wrapper
+```
+
+---
+
+## Personal Preferences
+
+<!--
+  Preferences that apply to how YOU work — not the whole team.
+  Examples: preferred agent behavior, verbosity, output style.
+-->
+
+- Prefer shorter commit message bodies — bullet points only, no prose
+- Always confirm before running database migrations, even in dev
+- When suggesting variable names, prefer verbose over terse
+
+---
+
+## Machine-Specific Gotchas
+
+<!--
+  Things that bite you on THIS machine that don't apply to teammates.
+-->
+
+- Node version managed by `fnm` — run `fnm use` before `npm install` or commands will use wrong version
+- Docker Desktop tends to hog memory — restart it if builds hang
+- `/tmp` is on a RAM disk here — don't write large test fixtures there
+
+---
+
+## Local Off-Limits
+
+<!--
+  Additional rules that apply on THIS machine only.
+  These are in addition to the Off Limits section in CLAUDE.md.
+-->
+
+- Do NOT restart the local Docker daemon — other projects depend on it

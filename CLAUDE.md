@@ -77,6 +77,15 @@ Do NOT do these unless explicitly asked:
 
 ---
 
+## Local Overrides
+
+`CLAUDE.local.md` — personal, machine-specific config that overrides this file.
+It is automatically gitignored by Claude Code. Copy from `CLAUDE.local.md.example` to get started.
+
+Use it for: local DB URLs, personal run commands, machine-specific gotchas, personal preferences.
+
+---
+
 ## Context Management
 
 When compacting, always preserve:
