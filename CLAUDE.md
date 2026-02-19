@@ -8,6 +8,7 @@
 
 See @.claude/docs/architecture.md for stack, structure, and boundaries.
 See @.claude/docs/conventions.md for naming, error handling, testing, and security rules.
+See @.claude/docs/design-system.md for UI tokens, component library, and established patterns.
 
 ---
 
@@ -18,6 +19,7 @@ See @.claude/docs/conventions.md for naming, error handling, testing, and securi
 | Start session          | `/init`               |
 | New feature            | `/feature [NNN]`      |
 | Plan only (no code)    | `/plan [description]` |
+| Build UI component     | `/ui [description]`   |
 | Debug an issue         | `/debug [issue]`      |
 | Review current changes | `/review`             |
 | Run tests + coverage   | `/test`               |
