@@ -1,35 +1,35 @@
 # Claude Code Project Template
 
-A batteries-included template for Claude Code that solves the four most common pain points:
+A batteries-included template that makes Claude Code consistent, autonomous, and high-quality across every project session.
 
-| Pain point             | Solution                                      |
-|------------------------|-----------------------------------------------|
-| Context gets lost      | `CLAUDE.md` + `/init` session ritual          |
-| Too much back-and-forth| Pre-built command workflows (`/feature`, etc) |
-| Quality inconsistency  | 8 specialized sub-agents with strict formats  |
-| No clear workflow      | Enforced TDD + review + commit pipeline       |
+| Pain point              | Solution                                          |
+| ----------------------- | ------------------------------------------------- |
+| Context gets lost       | `CLAUDE.md` + `@`-imported docs + `/init` ritual  |
+| Tasks forgotten between sessions | File-based task board (`TASKS.md`)       |
+| Too much back-and-forth | Pre-built command workflows                       |
+| Quality inconsistency   | 9 specialized sub-agents with strict formats      |
+| Inconsistent UI design  | Design system doc + `ui-designer` agent + `/ui`   |
+| No clear workflow       | Enforced TDD + review + commit pipeline           |
 
 ---
 
 ## How to Use This Template
 
-### For a new project
+### Copy to a new project
 
 ```bash
-# Copy the template into your project
 cp -r /path/to/claude-project-template/.claude /your/new/project/
 cp /path/to/claude-project-template/CLAUDE.md /your/new/project/
-
-# Fill in CLAUDE.md
-# Search for all placeholders: [REPLACE_ME] / [e.g. ...] / [description]
+cp /path/to/claude-project-template/TASKS.md /your/new/project/
 ```
 
-### After copying
+### Set up (do this once per project)
 
-1. **Fill in `CLAUDE.md`** — replace all placeholder values with your project's real details
-2. **Set your stack's test command** in the `/test` and `/feature` commands if different from `npm test`
-3. **Open Claude Code** in your project root
-4. Run `/init` to start your first session
+1. **Fill in `CLAUDE.md`** — project name, type, status, repo URL, run commands, gotchas
+2. **Fill in `.claude/docs/architecture.md`** — stack table, directory structure, architectural boundaries
+3. **Fill in `.claude/docs/conventions.md`** — naming, error handling, testing, env vars (or leave defaults)
+4. **Fill in `.claude/docs/design-system.md`** — run `npx shadcn@latest init`, pick a theme, paste the generated CSS variables into the color token table; set your font and sidebar width
+5. **Open Claude Code** in your project root and run `/init`
 
 ---
 
@@ -37,79 +37,136 @@ cp /path/to/claude-project-template/CLAUDE.md /your/new/project/
 
 ```
 .
-├── CLAUDE.md                      # Project context — fill this in per project
+├── CLAUDE.md                          # Project identity, commands, focus, gotchas
+├── TASKS.md                           # Task board dashboard (auto-maintained by Claude)
 └── .claude/
-    ├── settings.json              # Permissions (pre-allowed safe tools) + hooks
-    ├── agents/                    # Sub-agents (invoked by commands or explicitly)
-    │   ├── planner.md             # Creates implementation plans
-    │   ├── architect.md           # ADRs and architecture decisions
-    │   ├── tdd-guide.md           # Enforces write-tests-first
-    │   ├── code-reviewer.md       # Post-implementation review
-    │   ├── security-reviewer.md   # Security audit before commits
-    │   ├── build-error-resolver.md# Systematic build failure analysis
-    │   ├── debugger.md            # Root-cause debugging methodology
-    │   └── refactor-cleaner.md    # Safe refactoring without behavior change
-    ├── commands/                  # Custom slash commands
-    │   ├── init.md                # /init  — session startup ritual
-    │   ├── feature.md             # /feature — full TDD feature workflow
-    │   ├── plan.md                # /plan  — planning only, no implementation
-    │   ├── debug.md               # /debug — systematic bug investigation
-    │   ├── review.md              # /review — code + security review
-    │   ├── test.md                # /test  — run tests + coverage check
-    │   └── commit.md              # /commit — safe conventional commit
+    ├── settings.json                  # Permissions + hooks config
+    ├── docs/                          # @-imported into CLAUDE.md every session
+    │   ├── architecture.md            # Stack, directory structure, boundaries
+    │   ├── conventions.md             # Naming, errors, testing, security, env vars
+    │   └── design-system.md          # UI tokens, component library, patterns, inventory
+    ├── tasks/                         # One file per task, created by /plan
+    │   └── _TEMPLATE.md               # Reference format for task files
+    ├── agents/                        # Sub-agents with YAML frontmatter
+    │   ├── planner.md                 # Creates implementation plans (Read/Glob/Grep only)
+    │   ├── architect.md               # ADRs and architecture decisions (Opus)
+    │   ├── tdd-guide.md               # Enforces write-tests-first
+    │   ├── code-reviewer.md           # Post-implementation review (Read/Glob/Grep only)
+    │   ├── security-reviewer.md       # Security audit (Opus)
+    │   ├── build-error-resolver.md    # Systematic build failure analysis
+    │   ├── debugger.md                # Root-cause debugging methodology
+    │   ├── refactor-cleaner.md        # Safe refactoring without behavior change
+    │   └── ui-designer.md             # Consistent UI using the design system
+    ├── commands/                      # Custom slash commands
+    │   ├── init.md                    # /init    — session startup ritual
+    │   ├── plan.md                    # /plan    — creates task file, no code
+    │   ├── feature.md                 # /feature — full TDD cycle from task file
+    │   ├── ui.md                      # /ui      — design-system-aware component builder
+    │   ├── debug.md                   # /debug   — systematic bug investigation
+    │   ├── review.md                  # /review  — code + security review
+    │   ├── test.md                    # /test    — run tests + coverage check
+    │   └── commit.md                  # /commit  — safe conventional commit
     └── hooks/
-        ├── post-edit-format.sh    # Auto-formats files after every Write/Edit
-        └── pre-bash-guard.sh      # Blocks dangerous shell commands
+        ├── post-edit-format.sh        # Auto-formats files after every Write/Edit
+        └── pre-bash-guard.sh          # Blocks dangerous shell commands
 ```
+
+---
+
+## Task Workflow
+
+Tasks are persisted as numbered files so Claude never loses track between sessions.
+
+```
+/plan add CSV export to reports
+```
+→ Creates `.claude/tasks/003-add-csv-export-reports.md` with plan
+→ Adds entry to `TASKS.md` under To Do
+→ Waits for your approval before any code is written
+
+```
+/feature 003
+```
+→ Reads the task file as its plan (no re-planning)
+→ Updates status `TODO → IN_PROGRESS`, creates the branch
+→ Runs full TDD cycle, updating progress notes in the task file
+→ On completion: updates status to `DONE`, updates `TASKS.md`
+
+```
+/init
+```
+→ Reads `TASKS.md`, highlights the in-progress task, reads its progress notes
+→ Asks if you want to resume — restoring full context from where you left off
 
 ---
 
 ## Commands Reference
 
-| Command              | What it does                                                   |
-|----------------------|----------------------------------------------------------------|
-| `/init`              | Re-reads CLAUDE.md, checks git state, orients the session     |
-| `/feature [name]`    | Full TDD cycle: plan → test → implement → review → commit      |
-| `/plan [description]`| Planning only — explores codebase, produces plan, waits       |
-| `/debug [issue]`     | Systematic root-cause analysis and fix                        |
-| `/review`            | Code review + optional security review of current changes     |
-| `/test`              | Runs tests, checks coverage against 80% threshold             |
-| `/commit`            | Pre-commit checks, conventional commit message, safety guards |
+| Command               | What it does                                                        |
+| --------------------- | ------------------------------------------------------------------- |
+| `/init`               | Reads CLAUDE.md + TASKS.md, checks git state, orients the session  |
+| `/plan [description]` | Creates a numbered task file with full plan, waits for approval     |
+| `/feature [NNN]`      | Executes task NNN: TDD cycle → review → security → commit          |
+| `/ui [description]`   | Builds UI component using the design system and existing patterns   |
+| `/debug [issue]`      | Systematic root-cause analysis and fix                              |
+| `/review`             | Code review + optional security review of current changes          |
+| `/test`               | Runs tests, checks coverage against 80% threshold                  |
+| `/commit`             | Pre-commit checks, conventional commit message, safety guards       |
 
 ---
 
 ## Agents Reference
 
-Agents are invoked automatically by commands or you can invoke them directly:
+Agents have YAML frontmatter with a `description` field — Claude uses this to auto-select the right agent without you having to name it explicitly. You can also invoke them directly:
 
-> "Use the security-reviewer agent to audit the auth changes"
+> "Use the security-reviewer agent to audit these auth changes."
 
-| Agent                  | When to use                                                |
-|------------------------|------------------------------------------------------------|
-| `planner`              | Before writing any code for a non-trivial feature          |
-| `architect`            | When choosing between fundamentally different approaches   |
-| `tdd-guide`            | When you need to enforce the RED-GREEN-REFACTOR cycle      |
-| `code-reviewer`        | After implementing a feature, before committing            |
-| `security-reviewer`    | Before committing anything touching auth, input, or APIs   |
-| `build-error-resolver` | When the build or tests are broken                         |
-| `debugger`             | When a bug's root cause is unclear                         |
-| `refactor-cleaner`     | When cleaning up code without changing behavior            |
+| Agent                  | Auto-selected when...                                      | Model  |
+| ---------------------- | ---------------------------------------------------------- | ------ |
+| `planner`              | Starting a new feature or task                             | Sonnet |
+| `architect`            | Choosing between fundamentally different approaches        | Opus   |
+| `tdd-guide`            | Implementing any feature or bug fix                        | Sonnet |
+| `code-reviewer`        | After implementing, before committing                      | Sonnet |
+| `security-reviewer`    | Committing changes to auth, APIs, input, or DB queries     | Opus   |
+| `build-error-resolver` | Build or tests are failing                                 | Sonnet |
+| `debugger`             | Bug cause is unclear or fix isn't working                  | Sonnet |
+| `refactor-cleaner`     | Cleaning up code without changing behavior                 | Sonnet |
+| `ui-designer`          | Any UI component or screen work                            | Sonnet |
+
+Read-only agents (`planner`, `architect`, `code-reviewer`) have `tools: Read, Glob, Grep` — they cannot modify files, which prevents accidental edits during analysis.
+
+---
+
+## Design System
+
+The design system lives in `.claude/docs/design-system.md` and is imported into every Claude session. It acts as the single source of truth for all UI decisions.
+
+**Fill in once at project start:**
+- Component library (shadcn/ui recommended — pre-filled)
+- Color tokens — paste the CSS variables from `npx shadcn@latest init`
+- Font family, sidebar width, page max-width
+
+**Grows automatically over the project:**
+- `/ui` adds every new component to the Component Inventory
+- New structural patterns are documented in Component Patterns
+- Each session Claude reads the inventory before building — no duplicates, no drift
 
 ---
 
 ## Hooks
 
 ### `post-edit-format.sh`
-Automatically runs the appropriate formatter after every file write or edit:
-- TypeScript/JS → Prettier + ESLint
-- Python → black + isort + ruff
-- Go → gofmt + goimports
-- Rust → rustfmt
+Runs after every file write or edit. Auto-formats based on file extension:
+- `.ts`, `.tsx`, `.js`, `.jsx` → Prettier + ESLint
+- `.py` → black + isort + ruff
+- `.go` → gofmt + goimports
+- `.rs` → rustfmt
+- `.json`, `.md`, `.css`, `.yaml` → Prettier
 
-Formatters are only invoked if installed — nothing breaks if they aren't.
+Formatters only run if installed — nothing breaks if they aren't.
 
 ### `pre-bash-guard.sh`
-Blocks dangerous commands before they execute:
+Blocks before execution:
 - `rm -rf /`, `rm -rf ~`, `rm -rf *`
 - Force-pushing to `main`/`master`
 - `git reset --hard`
@@ -121,33 +178,56 @@ Blocks dangerous commands before they execute:
 
 ## Customizing for Your Stack
 
-### Change the test command
-Edit `.claude/commands/test.md` and `.claude/commands/feature.md` to replace `npm test` with your stack's command.
+### Test command
+Edit `.claude/commands/test.md` and `.claude/commands/feature.md` — replace `npm test` with your stack's command (`pytest`, `go test ./...`, etc.).
 
-### Add more allowed commands to `settings.json`
-Add entries to the `permissions.allow` array. Use glob patterns: `"Bash(docker*)"`
+### Allowed shell commands
+Add to the `permissions.allow` array in `.claude/settings.json`:
+```json
+"Bash(docker*)", "Bash(make*)", "Bash(cargo*)"
+```
 
-### Add project-specific guards to `pre-bash-guard.sh`
-Follow the pattern at the bottom of the file — add a `grep -qE` check and call `block "reason"`.
+### Additional bash guards
+Add to `.claude/hooks/pre-bash-guard.sh` following the existing pattern:
+```bash
+if echo "$COMMAND" | grep -qE 'your-pattern'; then
+    block "Reason shown to Claude"
+fi
+```
 
-### Adjust coverage thresholds
-Search for `80%` across the commands and agents if your project needs a different threshold.
+### Coverage threshold
+Search for `80%` across `.claude/commands/` and `.claude/agents/` to update the threshold.
+
+### Design system
+Edit `.claude/docs/design-system.md` — update the color token table, typography scale, and spacing scale to match your project's actual values after running `npx shadcn@latest init`.
 
 ---
 
-## CLAUDE.md Checklist
+## Setup Checklist
 
-When filling in `CLAUDE.md` for a new project, make sure you've covered:
+Copy this into your project's first task or keep it handy:
 
-- [ ] Project name and one-sentence description
-- [ ] Tech stack table (all layers)
-- [ ] Architecture overview and diagram
-- [ ] Architectural boundaries (what goes where)
-- [ ] How to run the project locally
-- [ ] All required environment variables
-- [ ] Naming conventions
-- [ ] Error handling conventions
-- [ ] Testing conventions
-- [ ] Current sprint focus
+**`CLAUDE.md`**
+- [ ] Project name and description
+- [ ] Type, status, and repo URL
+- [ ] Run commands (install, dev, test, coverage)
+- [ ] Current focus / active sprint
 - [ ] Known gotchas
-- [ ] What Claude should NOT do in this project
+- [ ] Off-limits rules
+
+**`.claude/docs/architecture.md`**
+- [ ] Tech stack table
+- [ ] Directory structure
+- [ ] Architectural boundaries
+
+**`.claude/docs/conventions.md`**
+- [ ] Naming conventions (or confirm defaults apply)
+- [ ] Error handling pattern
+- [ ] Environment variables table
+
+**`.claude/docs/design-system.md`**
+- [ ] Component library confirmed (shadcn/ui or alternative)
+- [ ] Color tokens (from `npx shadcn@latest init`)
+- [ ] Font family
+- [ ] Default border radius
+- [ ] Sidebar width / page max-width
