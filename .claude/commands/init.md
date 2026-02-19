@@ -6,9 +6,11 @@ Run this at the start of every Claude Code session to re-anchor context and avoi
 
 ---
 
-## Step 1: Read CLAUDE.md
+## Step 1: Read CLAUDE.md and CLAUDE.local.md
 
 Load the full project context: stack, architecture, conventions, current focus, and known gotchas.
+
+If `CLAUDE.local.md` exists, read it too — it contains personal/machine-specific overrides (local DB URLs, personal preferences, machine-specific gotchas) that take highest precedence over `CLAUDE.md`.
 
 ---
 

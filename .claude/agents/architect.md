@@ -1,7 +1,7 @@
 ---
 name: architect
 description: Evaluates architectural trade-offs and documents decisions as ADRs. Invoke when choosing between fundamentally different technical approaches, adding a major dependency, or restructuring how components interact.
-tools: Read, Glob, Grep
+tools: Read, Write, Edit, Glob, Grep
 model: opus
 ---
 

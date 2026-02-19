@@ -20,7 +20,9 @@ A batteries-included template that makes Claude Code consistent, autonomous, and
 ```bash
 cp -r /path/to/claude-project-template/.claude /your/new/project/
 cp /path/to/claude-project-template/CLAUDE.md /your/new/project/
+cp /path/to/claude-project-template/CLAUDE.local.md.example /your/new/project/
 cp /path/to/claude-project-template/TASKS.md /your/new/project/
+cp /path/to/claude-project-template/.mcp.json /your/new/project/
 ```
 
 ### Set up (do this once per project)
@@ -29,7 +31,10 @@ cp /path/to/claude-project-template/TASKS.md /your/new/project/
 2. **Fill in `.claude/docs/architecture.md`** — stack table, directory structure, architectural boundaries
 3. **Fill in `.claude/docs/conventions.md`** — naming, error handling, testing, env vars (or leave defaults)
 4. **Fill in `.claude/docs/design-system.md`** — run `npx shadcn@latest init`, pick a theme, paste the generated CSS variables into the color token table; set your font and sidebar width
-5. **Open Claude Code** in your project root and run `/init`
+5. **Configure `.mcp.json`** — add your `GITHUB_PERSONAL_ACCESS_TOKEN` to your shell env; replace the postgres placeholder URL with your dev database URL
+6. **Set up `CLAUDE.local.md`** — `cp CLAUDE.local.md.example CLAUDE.local.md`, then fill in your local DB URL and any machine-specific overrides
+7. **Make hooks executable** — `chmod +x .claude/hooks/*.sh`
+8. **Open Claude Code** in your project root and run `/init`
 
 ---
 
