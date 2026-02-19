@@ -1,7 +1,7 @@
 ---
 name: planner
 description: Creates detailed implementation plans before any code is written. Invoke when starting a new feature or task, or when requirements need to be thought through before touching code.
-tools: Read, Glob, Grep
+tools: Read, Glob, Grep, mcp__github, mcp__fetch
 model: sonnet
 ---
 
@@ -67,6 +67,14 @@ Produce your plan in this exact structure. It will be written verbatim into the 
 **[Low / Medium / High]** — [One sentence justification]
 
 ---
+
+## MCP Tools
+
+Use these when available — they give you ground truth before you plan.
+
+- **`mcp__github__get_issue` / `mcp__github__list_issues`** — if the task references a GitHub issue number, read it and its comments before planning. Don't rely on the user's summary.
+- **`mcp__github__search_code`** — search across the full repo when Grep is insufficient (e.g., a symbol used in many places, or code you suspect exists but can't locate).
+- **`mcp__fetch__fetch`** — fetch third-party API documentation when the plan involves integrating an external service. Read the real docs, not your training data.
 
 ## Constraints
 

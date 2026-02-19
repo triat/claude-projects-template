@@ -1,4 +1,5 @@
 {
+  "enabledMcpjsonServers": ["github", "postgres", "fetch"],
   "permissions": {
     "allow": [
       "Bash(git status)",

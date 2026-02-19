@@ -1,7 +1,7 @@
 ---
 name: security-reviewer
 description: Audits code for security vulnerabilities including injection, auth flaws, and data exposure. Invoke before committing any changes touching auth, APIs, user input, or database queries.
-tools: Read, Glob, Grep, Bash
+tools: Read, Glob, Grep, Bash, mcp__github, mcp__fetch
 model: opus
 ---
 
@@ -79,6 +79,15 @@ Work through this list for every review:
 ### Verdict
 [APPROVED / MUST FIX BEFORE COMMIT / ESCALATE]
 ```
+
+## MCP Tools
+
+- **`mcp__fetch__fetch`** — check CVE databases for known vulnerabilities in dependencies. Useful sources:
+  - `https://osv.dev/v1/query` (POST with package name + ecosystem)
+  - `https://api.github.com/advisories` (GitHub Security Advisories)
+  - `https://nvd.nist.gov/vuln/search/results?query=[package]`
+- **`mcp__github__search_code`** — scan the full repository for a vulnerable pattern beyond what Grep covers locally. Useful when you find one instance of an injection risk and want to confirm it's isolated.
+- **`mcp__github__create_issue`** — if a CRITICAL or HIGH vulnerability cannot be fixed immediately (e.g., requires architectural change), file a GitHub issue with the finding rather than blocking the commit indefinitely.
 
 ## Response Protocol
 

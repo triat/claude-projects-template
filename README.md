@@ -39,12 +39,14 @@ cp /path/to/claude-project-template/TASKS.md /your/new/project/
 .
 ├── CLAUDE.md                          # Project identity, commands, focus, gotchas
 ├── TASKS.md                           # Task board dashboard (auto-maintained by Claude)
+├── .mcp.json                          # MCP server declarations (GitHub, DB, Fetch)
 └── .claude/
     ├── settings.json                  # Permissions + hooks config
     ├── docs/                          # @-imported into CLAUDE.md every session
     │   ├── architecture.md            # Stack, directory structure, boundaries
     │   ├── conventions.md             # Naming, errors, testing, security, env vars
-    │   └── design-system.md          # UI tokens, component library, patterns, inventory
+    │   ├── design-system.md           # UI tokens, component library, patterns, inventory
+    │   └── mcp.md                     # MCP server reference — tools, usage, setup checklist
     ├── tasks/                         # One file per task, created by /plan
     │   └── _TEMPLATE.md               # Reference format for task files
     ├── agents/                        # Sub-agents with YAML frontmatter
@@ -280,6 +282,47 @@ The design system lives in `.claude/docs/design-system.md` and is imported into 
 - `/ui` adds every new component to the Component Inventory
 - New structural patterns are documented in Component Patterns
 - Each session Claude reads the inventory before building — no duplicates, no drift
+
+---
+
+## MCP Servers
+
+MCP (Model Context Protocol) gives Claude native access to external tools. Servers are declared in `.mcp.json` at the project root and enabled in `.claude/settings.json`.
+
+| Server | Package | What it enables |
+|--------|---------|-----------------|
+| **GitHub** | `@modelcontextprotocol/server-github` | Read issues, open PRs, post comments, search code |
+| **PostgreSQL** | `@modelcontextprotocol/server-postgres` | Query live DB data (read-only) during debugging and planning |
+| **Fetch** | `@modelcontextprotocol/server-fetch` | Fetch docs, CVE databases, changelogs, API specs |
+
+### Setup
+
+**GitHub** — create a token at https://github.com/settings/tokens (scopes: `repo`, `read:org`) and export it:
+```bash
+export GITHUB_PERSONAL_ACCESS_TOKEN=ghp_...   # add to ~/.zshrc or ~/.bashrc
+```
+
+**PostgreSQL** — replace the placeholder in `.mcp.json`:
+```json
+"args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://user:pass@localhost/mydb"]
+```
+Use your **development** database only. For MySQL/SQLite, swap the package for `@modelcontextprotocol/server-mysql` or `@modelcontextprotocol/server-sqlite`.
+
+**Fetch** — no credentials needed, works out of the box.
+
+### Verify
+```bash
+claude mcp list          # should show github, postgres, fetch as connected
+```
+
+### How agents use MCP
+
+| Agent | MCP tools used |
+|-------|---------------|
+| `planner` | GitHub: reads linked issues before planning; Fetch: reads third-party API docs |
+| `debugger` | Postgres: queries live data to inspect state; GitHub: reads bug reports; Fetch: looks up error docs |
+| `build-error-resolver` | Fetch: reads library changelogs and breaking change notes |
+| `security-reviewer` | Fetch: checks CVE databases (OSV, NVD); GitHub: scans full repo for vulnerable patterns |
 
 ---
 

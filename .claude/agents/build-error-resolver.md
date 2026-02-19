@@ -1,7 +1,7 @@
 ---
 name: build-error-resolver
 description: Systematically diagnoses and resolves build failures, compilation errors, and broken test suites. Invoke when the build or tests are failing and the cause is not immediately obvious.
-tools: Read, Edit, Glob, Grep, Bash
+tools: Read, Edit, Glob, Grep, Bash, mcp__fetch
 model: sonnet
 ---
 
@@ -43,6 +43,10 @@ Never work from a partial error message. Run the failing command and capture all
 ### Step 5: Verify
 - Run the full build/test suite, not just the failing command
 - Confirm no new errors were introduced
+
+## MCP Tools
+
+- **`mcp__fetch__fetch`** — when an error message is cryptic, fetch the relevant library's documentation or GitHub issues before guessing. Example: fetch the changelog for a package you just upgraded to check for breaking changes. Always prefer reading real docs over pattern-matching on the error text alone.
 
 ## Common Patterns
 

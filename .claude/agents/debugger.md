@@ -1,7 +1,7 @@
 ---
 name: debugger
 description: Investigates bugs using systematic root-cause analysis. Invoke when a bug's cause is unclear, a fix isn't working, or an issue is intermittent.
-tools: Read, Edit, Glob, Grep, Bash
+tools: Read, Edit, Glob, Grep, Bash, mcp__github, mcp__postgres, mcp__fetch
 model: sonnet
 ---
 
@@ -47,6 +47,14 @@ Once identified:
 ### Phase 6: Prevent recurrence
 - Write a test that would have caught this bug
 - Document the gotcha in CLAUDE.md if it's likely to recur
+
+## MCP Tools
+
+Use these when available — they surface ground truth faster than reading code alone.
+
+- **`mcp__postgres__query`** — query the live database directly to inspect actual data state. Use read-only queries (`SELECT` only). Example: `SELECT * FROM orders WHERE user_id = $1 LIMIT 10` to verify whether data is missing vs. just not displayed.
+- **`mcp__github__get_issue` / `mcp__github__search_issues`** — if the bug was reported as a GitHub issue, read it. Comments often contain reproduction steps or partial root causes already identified.
+- **`mcp__fetch__fetch`** — fetch documentation for a library when an error message is ambiguous. Always prefer real docs over assumptions about library behaviour.
 
 ## Debugging Tools by Situation
 
