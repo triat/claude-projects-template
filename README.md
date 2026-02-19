@@ -65,6 +65,7 @@ cp /path/to/claude-project-template/TASKS.md /your/new/project/
     │   ├── feature.md                 # /feature — full TDD cycle from task file
     │   ├── ui.md                      # /ui      — design-system-aware component builder
     │   ├── debug.md                   # /debug   — systematic bug investigation
+    │   ├── refactor.md                # /refactor — safe incremental refactoring
     │   ├── review.md                  # /review  — code + security review
     │   ├── test.md                    # /test    — run tests + coverage check
     │   └── commit.md                  # /commit  — safe conventional commit
@@ -111,6 +112,7 @@ Tasks are persisted as numbered files so Claude never loses track between sessio
 | `/feature [NNN]`      | Executes task NNN: TDD cycle → review → security → commit          |
 | `/ui [description]`   | Builds UI component using the design system and existing patterns   |
 | `/debug [issue]`      | Systematic root-cause analysis and fix                              |
+| `/refactor [scope]`   | Safe incremental refactoring with test-gate and per-step commits   |
 | `/review`             | Code review + optional security review of current changes          |
 | `/test`               | Runs tests, checks coverage against 80% threshold                  |
 | `/commit`             | Pre-commit checks, conventional commit message, safety guards       |

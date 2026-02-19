@@ -21,6 +21,7 @@ See @.claude/docs/design-system.md for UI tokens, component library, and establi
 | Plan only (no code)    | `/plan [description]` |
 | Build UI component     | `/ui [description]`   |
 | Debug an issue         | `/debug [issue]`      |
+| Refactor code          | `/refactor [scope]`   |
 | Review current changes | `/review`             |
 | Run tests + coverage   | `/test`               |
 | Commit                 | `/commit`             |
