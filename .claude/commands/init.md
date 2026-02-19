@@ -2,42 +2,83 @@
 
 Run this at the start of every Claude Code session to re-anchor context and avoid working on stale assumptions.
 
-## Steps
+**Do not start implementing anything during `/init`. This is orientation only.**
 
-1. **Read CLAUDE.md** — Load the full project context: stack, architecture, conventions, current focus, known gotchas.
+---
 
-2. **Check git status**
-   ```bash
-   git status
-   git log --oneline -10
-   git stash list
-   ```
-   Report:
-   - Current branch
-   - Any uncommitted changes (staged or unstaged)
-   - Any stashed work
-   - The last 10 commits (to understand recent activity)
+## Step 1: Read CLAUDE.md
 
-3. **Check for open TODOs in the codebase**
-   Search for `TODO`, `FIXME`, `HACK`, `XXX` in source files. Briefly list any found.
+Load the full project context: stack, architecture, conventions, current focus, and known gotchas.
 
-4. **Summarize the session starting point**
-   Produce a short briefing in this format:
+---
 
-   ---
-   ## Session Ready
+## Step 2: Read TASKS.md
 
-   **Branch**: `[branch-name]`
-   **Status**: [Clean / Has uncommitted changes: list them]
-   **Recent work**: [1–2 sentence summary from git log]
-   **Current focus** (from CLAUDE.md): [Copy the active sprint/phase section]
-   **Known gotchas to watch**: [Copy the gotchas from CLAUDE.md]
+Load the task board to understand what is queued, in progress, and done.
 
-   ---
+If a task shows **IN_PROGRESS**, read its full task file from `.claude/tasks/` — this is likely what the user will want to continue.
 
-5. **Ask what to work on**
-   "What would you like to work on today?" — then wait for the user's answer before doing anything else.
+---
 
-## Important
+## Step 3: Check git state
 
-Do not start implementing anything during `/init`. This is an orientation step, not a work step.
+```bash
+git status
+git log --oneline -10
+git stash list
+```
+
+Note:
+- Current branch
+- Uncommitted changes (staged or unstaged)
+- Stashed work
+- The last 10 commits
+
+Cross-reference the current branch with the IN_PROGRESS task (if any). If they match, say so.
+
+---
+
+## Step 4: Check for inline TODOs
+
+Scan source files for `TODO`, `FIXME`, `HACK`, `XXX`. List any found briefly — these are potential tasks that haven't been formally queued yet.
+
+---
+
+## Step 5: Produce the session briefing
+
+```
+## Session Ready
+
+**Branch**: `[branch-name]`
+**Git status**: [Clean / Uncommitted changes: list files]
+**Recent commits**: [1–2 sentence summary of what was done recently]
+
+### Task Board
+🔄 In Progress: [task ID and title, or "None"]
+📋 To Do: [count] task(s) queued — next up: [first TODO task ID and title]
+✅ Done: [count] task(s) completed
+
+### Resuming
+[If IN_PROGRESS task exists]:
+Task [NNN-slug] is in progress. Last progress note: "[copy last entry from ## Progress Notes]"
+Ready to continue from [last completed phase].
+
+### From CLAUDE.md
+**Current focus**: [copy the active sprint/phase]
+**Gotchas to watch**: [copy the known gotchas]
+```
+
+---
+
+## Step 6: Ask what to work on
+
+If there is an IN_PROGRESS task:
+> "It looks like you were working on **[NNN — title]**. Want to continue, or is there something else?"
+
+If there are only TODO tasks:
+> "You have [N] task(s) queued. Want to start **[NNN — first task]**, or is there something else?"
+
+If there are no tasks at all:
+> "No tasks queued. What would you like to work on? (Run `/plan [description]` to create a task first.)"
+
+Then wait. Do not do anything until the user responds.
