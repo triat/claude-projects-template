@@ -115,6 +115,136 @@ Tasks are persisted as numbered files so Claude never loses track between sessio
 
 ---
 
+## Example Workflows
+
+### 1. Starting a new session
+
+You open Claude Code the next morning. You don't remember exactly where you left off.
+
+```
+/init
+```
+
+Claude reads `CLAUDE.md`, loads `TASKS.md`, checks git state, and produces:
+
+```
+## Session Ready
+
+Branch: feat/003-invoice-export
+Git status: 1 unstaged change — src/services/export.ts
+Recent commits: added CSV formatter utility (yesterday)
+
+Task Board
+🔄 In Progress: 003-invoice-export
+📋 To Do: 2 tasks queued — next up: 004-email-notifications
+✅ Done: 2 tasks
+
+Resuming
+Task 003 is in progress. Last note: "GREEN phase — all tests passing,
+refactor step next."
+
+It looks like you were working on 003 — invoice export. Want to continue?
+```
+
+You type "yes" and pick up exactly where you left off.
+
+---
+
+### 2. Planning and building a feature
+
+```
+/plan add pagination to the users API endpoint
+```
+
+Claude explores the codebase, finds the existing endpoint pattern, and produces a task file at `.claude/tasks/005-paginate-users-endpoint.md`. It shows you the plan — files to change, implementation sequence, test strategy — and asks for approval.
+
+You reply: "Looks good, approved."
+
+```
+/feature 005
+```
+
+Claude reads the task file and begins:
+
+1. Writes failing tests for the paginated endpoint (shows RED output)
+2. Implements the minimal pagination logic (tests go GREEN)
+3. Refactors and hits 80%+ coverage
+4. Runs code review — flags one MEDIUM issue (missing index on `created_at`), fixes it
+5. Runs security review — confirms query uses parameterized inputs
+6. Marks task DONE in the file, moves it to ✅ Done in `TASKS.md`
+7. Commits with message: `feat: add cursor-based pagination to GET /users`
+
+---
+
+### 3. Building a UI component
+
+```
+/ui stats card showing total revenue, number of orders, and trend vs last month
+```
+
+Claude:
+1. Reads `.claude/docs/design-system.md` — loads the color tokens, spacing scale, and existing patterns
+2. Checks the Component Inventory — no existing stats card
+3. Checks Component Patterns — finds the dashboard card pattern established earlier
+4. Builds the component using shadcn `Card` primitives, matching the existing pattern exactly
+5. Uses only `text-muted-foreground`, `bg-card`, `text-foreground` — no raw colors
+6. Adds the component to the inventory in `design-system.md`
+
+Every stats card in your app now looks identical because they all follow the same pattern.
+
+---
+
+### 4. Debugging a production issue
+
+Users are reporting that login fails after being idle for 30 minutes.
+
+```
+/debug login fails after ~30 minutes of inactivity — users get a 401 but refreshing fixes it
+```
+
+Claude:
+1. Searches for token refresh logic in `src/auth/`
+2. Forms two hypotheses: (a) access token TTL mismatch with refresh window, (b) refresh token not being sent on retry
+3. Tests hypothesis (a) first — finds that `ACCESS_TOKEN_TTL=1800` (30 min) but the refresh is only triggered at `TTL - 60s`, leaving a race window
+4. Writes a failing test that reproduces the race condition
+5. Fixes the refresh trigger to `TTL * 0.8` — test goes green
+6. Adds the gotcha to `CLAUDE.md`: "Access token refresh triggers at 80% of TTL — not at expiry minus fixed seconds"
+7. Commits: `fix: prevent auth race condition on token refresh near expiry`
+
+---
+
+### 5. Reviewing before a commit
+
+You've been coding for a few hours and want a second opinion before committing.
+
+```
+/review
+```
+
+Claude diffs all changed files and runs two agents in sequence:
+
+- **code-reviewer** finds one HIGH issue: a missing `await` on an async DB call that would silently fail
+- **security-reviewer** finds one MEDIUM issue: a new endpoint is missing rate limiting
+
+Claude fixes both, then asks: "Issues resolved — ready to commit?"
+
+```
+/commit
+```
+
+Claude checks for secrets in the diff, stages the right files, and proposes:
+
+```
+fix: add missing await on user update and rate limit POST /export
+
+The missing await caused silent failures on concurrent updates.
+Rate limiting added to match the convention on all other POST endpoints.
+```
+
+You approve, commit is created.
+
+---
+
 ## Agents Reference
 
 Agents have YAML frontmatter with a `description` field — Claude uses this to auto-select the right agent without you having to name it explicitly. You can also invoke them directly:
